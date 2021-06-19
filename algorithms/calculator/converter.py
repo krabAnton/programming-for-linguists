@@ -41,13 +41,13 @@ class ReversePolishNotationConverter:
     """
     point = '.'
 
-    def __init__(self, infix_string: str):
-        self._infix_notation = Queue_(infix_string)
-        self._postfix_notation = ReversePolishNotation()
-        self.stack = Stack()
+    # def __init__(self, infix_string: str):
+    #     self._infix_notation = Queue_(infix_string)
+    #     self._postfix_notation = ReversePolishNotation()
+    #     self.stack = Stack()
 
     @staticmethod
-    def convert(self) -> ReversePolishNotation:
+    def convert(expression_in_infix_notation: str) -> ReversePolishNotation:
         """
         Цикл while
         Main method of the class.
@@ -56,36 +56,39 @@ class ReversePolishNotationConverter:
         :return: ReversePolishNotation object
         """
 
-        while not self._infix_notation.empty():
+        state = ReversePolishNotationConverterState(expression_in_infix_notation)
 
-            symbol = self._infix_notation.get()
+        while not state.expression_in_infix_notation.empty():
+
+            symbol = state.expression_in_infix_notation.top()
+
+            if ReversePolishNotationConverter.is_part_of_digit(symbol):
+                digit = ReversePolishNotationConverter.read_digit(state)
+                state.expression_in_postfix_notation.put(digit)
+                continue
+
             operator = OpFactory.get_op_by_symbol(symbol)
 
-            if self.is_part_of_digit(symbol):
-                digit = self.read_digit(symbol)
-                self._postfix_notation.put(digit)
-                continue
-
-            if self.is_open_bracket(operator):
-                self.stack.push(operator)
+            if ReversePolishNotationConverter.is_open_bracket(operator):
+                state.stack.push(operator)
                 # state.expression_in_infix_notation.get()
                 continue
 
-            if self.is_close_bracket(operator):
-                self.pop_from_stack_until_opening_bracket()
+            if ReversePolishNotationConverter.is_close_bracket(operator):
+                state.pop_from_stack_until_opening_bracket()
                 # state.expression_in_infix_notation.get()
                 continue
 
-            if self.is_binary_operation(operator):
-                self.pop_from_stack_until_prioritizing(operator)
+            if ReversePolishNotationConverter.is_binary_operation(operator):
+                ReversePolishNotationConverter.pop_from_stack_until_prioritizing(operator, state)
                 # state.expression_in_infix_notation.get()
             else:
                 raise Exception(symbol)
 
-        while not self.stack.empty():
-            self._postfix_notation.put(self.stack.top())
-            self.stack.pop()
-        return self._postfix_notation
+        while not state.stack.empty():
+            state.expression_in_postfix_notation.put(state.stack.top())
+            state.stack.pop()
+        return state.expression_in_postfix_notation
 
     @staticmethod
     def pop_from_stack_until_prioritizing(operator: Op, state: ReversePolishNotationConverterState):
@@ -109,7 +112,7 @@ class ReversePolishNotationConverter:
         :param state: expression in Reverse Polish Notation Format
         :return: Instance of Digit class
         """
-        digit = state.expression_in_infix_notation.top()
+        digit = ""
         while not state.expression_in_infix_notation.empty() and \
                 ReversePolishNotationConverter.is_part_of_digit(state.expression_in_infix_notation.top()):
             digit += state.expression_in_infix_notation.get()
@@ -126,7 +129,7 @@ class ReversePolishNotationConverter:
         if character == ReversePolishNotationConverter.point:
             return True
         try:
-            set(character)
+            int(character)
             return True
         except ValueError:
             return False
