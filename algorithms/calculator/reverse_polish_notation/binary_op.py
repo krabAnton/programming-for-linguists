@@ -3,6 +3,7 @@ Programming for linguists
 
 Interfaces and classes of Binary operators
 """
+# Success
 
 from algorithms.calculator.reverse_polish_notation.digit import Digit
 from algorithms.calculator.reverse_polish_notation.op import Op
@@ -43,27 +44,52 @@ class Plus(BinaryOp):
     """
     Implementation of operator +
     """
-
+    priority = 0
+    symbol = '+'
+    @staticmethod
+    def _function(first_element: float, second_element: float) -> float:
+        return first_element + second_element
+    
 
 class Minus(BinaryOp):
     """
     Implementation of operator -
     """
+    priority = 0
+    symbol = '-'
+    @staticmethod
+    def _function(first_element: float, second_element: float) -> float:
+        return first_element - second_element
 
 
 class Multiplier(BinaryOp):
     """
     Implementation of operator *
     """
+    priority = 1
+    symbol = '*'
+    @staticmethod
+    def _function(first_element: float, second_element: float) -> float:
+        return first_element * second_element
 
 
 class Divider(BinaryOp):
     """
     Implementation of operator /
     """
+    priority = 1
+    symbol = '/'
+    @staticmethod
+    def _function(first_element: float, second_element: float) -> float:
+        return first_element / second_element
 
 
 class Power(BinaryOp):
     """
     Implementation of operator ^
     """
+    priority = 2
+    symbol = '^'
+    @staticmethod
+    def _function(first_element: float, second_element: float) -> float:
+        return first_element ** second_element
